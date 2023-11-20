@@ -45,6 +45,15 @@ public class Webcontroller {
 		
 		System.out.println(role.toString());
 		
+		
 		return "redirect:/success";
 	}
+	
+	@GetMapping("/success")
+	public String successPage() {
+		
+		return "success";
+	}
+	
+	
 }
