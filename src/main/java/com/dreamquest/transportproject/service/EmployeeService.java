@@ -21,7 +21,7 @@ public class EmployeeService {
 	@Transactional
 	public void save(Employee employee) {
 		Employee employeereturn =  employeeDAO.save(employee);
-		System.out.println(employeereturn.getReservations());
+		System.out.println("Reservations for the employee: "+employeereturn.getReservations());
 		
 	}
 

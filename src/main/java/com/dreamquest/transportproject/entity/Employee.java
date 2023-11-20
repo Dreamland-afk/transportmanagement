@@ -13,6 +13,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 @Entity
@@ -32,19 +33,38 @@ public class Employee {
 
 	@Column(name = "email")
 	private String email;
+	
+	@Column(name = "contact")
+	private String contact;
+	
+	@Column(insertable = false, updatable = false)
+	private String formRole;
+	
+	
+	@ManyToOne(cascade = {CascadeType.DETACH,CascadeType.MERGE,CascadeType.PERSIST,CascadeType.REFRESH})
+	@JoinColumn(name = "role_id")
+	private Role role;
 
 	@ManyToMany(cascade = { CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH},fetch = FetchType.EAGER)
 	@JoinTable(name = "employee_reservation", joinColumns = @JoinColumn(name = "employee_id"), inverseJoinColumns = @JoinColumn(name = "reservation_id"))
 	private List<Reservation> reservations;
 
+
 	public Employee() {
 	}
 
-	public Employee(String firstName, String lastName, String email) {
+
+
+	public Employee(Long employeeId, String firstName, String lastName, String email, String contact) {
+		super();
+		this.employeeId = employeeId;
 		this.firstName = firstName;
 		this.lastName = lastName;
 		this.email = email;
+		this.contact = contact;
 	}
+
+
 
 	public Long getEmployeeId() {
 		return employeeId;
@@ -79,6 +99,23 @@ public class Employee {
 	}
 
 	
+	
+	public String getContact() {
+		return contact;
+	}
+
+	public void setContact(String contact) {
+		this.contact = contact;
+	}
+
+	public Role getRole() {
+		return role;
+	}
+
+	public void setRole(Role role) {
+		this.role = role;
+	}
+
 	public List<Reservation> getReservations() {
 		return reservations;
 	}
@@ -87,6 +124,20 @@ public class Employee {
 		this.reservations = reservations;
 	}
 	
+	
+	
+	public String getFormRole() {
+		return formRole;
+	}
+
+
+
+	public void setFormRole(String formRole) {
+		this.formRole = formRole;
+	}
+
+
+
 	public void bookSeat(Reservation reservation)
 	{
 		if(reservations == null)
@@ -98,7 +149,9 @@ public class Employee {
 	@Override
 	public String toString() {
 		return "Employee [employeeId=" + employeeId + ", firstName=" + firstName + ", lastName=" + lastName + ", email="
-				+ email + "]";
+				+ email + ", contact=" + contact + "]";
 	}
+
+	
 
 }
