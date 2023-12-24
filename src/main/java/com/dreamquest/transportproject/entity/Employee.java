@@ -3,6 +3,8 @@ package com.dreamquest.transportproject.entity;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.dreamquest.transportproject.annotation.ArcEmail;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -15,6 +17,7 @@ import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 
 @Entity
 @Table(name = "employee")
@@ -32,13 +35,14 @@ public class Employee {
 	private String lastName;
 
 	@Column(name = "email")
+	@ArcEmail
 	private String email;
 	
 	@Column(name = "contact")
 	private String contact;
 	
-	@Column(insertable = false, updatable = false)
-	private String formRole;
+	@Transient
+	private String formRole; //Has no use in entity but used as a helper token to parse role from the form.
 	
 	
 	@ManyToOne(cascade = {CascadeType.DETACH,CascadeType.MERGE,CascadeType.PERSIST,CascadeType.REFRESH})

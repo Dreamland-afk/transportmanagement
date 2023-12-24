@@ -20,9 +20,10 @@ public class EmployeeService {
 
 	@Transactional
 	public void save(Employee employee) {
-		Employee employeereturn =  employeeDAO.save(employee);
-		System.out.println("Reservations for the employee: "+employeereturn.getReservations());
-		
+		Employee employeereturn = employeeDAO.save(employee);
+
+		System.out.println("Reservations for the employee: " + employeereturn.getReservations());
+
 	}
 
 	public Employee findById(Long id) {
@@ -49,26 +50,24 @@ public class EmployeeService {
 		return optional.get().getReservations();
 
 	}
-	
-	@Transactional
-	public String bookASpot(Long id, Reservation reservation) {
 
+	@Transactional
+	public String bookASpot(Long id, Reservation reservation) throws Exception {
+
+		System.out.println("Finding employee");
 		Optional<Employee> optional = employeeDAO.findById(id);
 
 		if (optional.isEmpty()) {
-			System.out.println("Not Found");
-			return null;
+			System.out.println("Employee Not Found");
+			throw new Exception("Employee not found");
 		}
-//		List<Reservation> list =  optional.get().getReservations();
-//		list.add(reservation);
 
-		Employee employee =  optional.get();
-		
-		employee.getReservations();
+		Employee employee = optional.get();
+
 		employee.bookSeat(reservation);
-		
+
 		save(employee);
-		
+
 		return "Reservation Successful.";
 
 	}
