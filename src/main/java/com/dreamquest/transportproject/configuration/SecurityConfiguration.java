@@ -38,13 +38,16 @@ public class SecurityConfiguration {
 	public SecurityFilterChain securityChain(HttpSecurity http) throws Exception {
 		http.authorizeHttpRequests((authorize) -> authorize
 
-				.requestMatchers("/transport/registration").permitAll().requestMatchers("/register").permitAll()
-				.requestMatchers("/transport/login").permitAll()
 				.requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
+				.requestMatchers("/transport/registration").permitAll()
+				.requestMatchers("/transport/register").permitAll()
+				.requestMatchers("/transport/success").permitAll()
+				.requestMatchers("/transport/login").permitAll()
+				
 				.requestMatchers("/test").hasAuthority("Admin")
 
 				.anyRequest().authenticated())
-				.formLogin(form -> form.loginPage("/transport/login").loginProcessingUrl("/login-processing")
+				.formLogin(form -> form.loginPage("/transport/login").loginProcessingUrl("/transport/login-processing")
 						.defaultSuccessUrl("/transport/bookaseat"))
 				.logout((logout) -> logout.invalidateHttpSession(true)
 //						.logoutUrl("/logout")
