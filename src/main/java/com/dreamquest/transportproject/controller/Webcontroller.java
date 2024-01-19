@@ -4,12 +4,15 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.dreamquest.transportproject.entity.Employee;
 import com.dreamquest.transportproject.entity.Reservation;
@@ -21,6 +24,7 @@ import com.dreamquest.transportproject.service.RoleService;
 import jakarta.validation.Valid;
 
 @Controller
+@RequestMapping("/transport")
 public class Webcontroller {
 
 	@Autowired
@@ -32,10 +36,22 @@ public class Webcontroller {
 	@Autowired
 	RoleService roleService;
 	
+	@Autowired
+	PasswordEncoder passwordEncoder;
+	
+	
 	@Value("${distinationList}")
 	List<String> destinationList;
 
-	@GetMapping("/showRegistrationForm")
+	
+	
+	@GetMapping("/login")
+	public String loginForm() {
+		return "login-page";
+	}
+	
+	
+	@GetMapping("/registration")
 	public String showRegistrationForm(Model model)
 	{
 		model.addAttribute("employee", new Employee()); 
@@ -52,21 +68,30 @@ public class Webcontroller {
 			return "customer-registration";
 		}
 		
-		Role role = roleService.findByRole(employee.getFormRole());
-		
-		employee.setRole(role);
-		
-		employeeService.save(employee);
-		
-		System.out.println(role.toString());
-		
-		
-		return "redirect:/success";
+		if (employee.getPassword().equals(employee.getConfirmPassword())) {
+			Role role = roleService.findByRole(employee.getFormRole());
+
+			employee.setRole(role);
+
+			employee.setPassword(passwordEncoder.encode(employee.getPassword()));
+
+			employeeService.save(employee);
+
+			System.out.println(role.toString());
+
+			return "redirect:/success";
+		}
+
+		return "redirect:/";
 	}
 	
 	@GetMapping("/bookaseat")
 	public String bookSeat(Model model)
 	{
+		// Retrive the email from the security session object then do the processing.
+		
+		// Add it to the model
+		
 		model.addAttribute("options", destinationList);
 		model.addAttribute("reservation", new Reservation());
 		return "reservation-form";
@@ -92,23 +117,41 @@ public class Webcontroller {
 		
 		employeeService.bookASpot(3L, fetchReservation);
 		
+		// Here I need to add the destination
+		
+		
 		return "success";
 		
 	}
 	
 	@GetMapping("/test")
-	public String main() throws Exception
+	public String main( Model model) throws Exception
 	{
 //		reservationService.getReservationByDestination("Ultadanga");
 //		System.out.println(employeeService.findById(3l));
 //		
 //		Reservation fetchReservation = new Reservation("Delhi");
 //		employeeService.bookASpot(3L, fetchReservation);
+//		List<Employee> employees = reservationService.getEmployeesPerDate();
+//		System.out.println(employees);
+//		
+//		model.addAttribute("employeeList", employees);
+//		model.addAttribute("sessionUser", "swapnadeep407@e-arc.com");
+//		
+//		return "reservation_list";
+
 		
-		System.out.println(reservationService.getEmployeesPerDate());
+		reservationService.fetchEmailReservationsForDay("swapnadeep407@e-arc.com");
 		
 		return "success";
-		
+	}
+	
+	
+	@GetMapping("/removeReservation")
+	public String deleteReservation(@RequestParam (value = "email")String email)
+	{
+		System.out.println("Deleted requested for email: "+ email);
+		return "redirect:/reservation_list";
 	}
 	
 }

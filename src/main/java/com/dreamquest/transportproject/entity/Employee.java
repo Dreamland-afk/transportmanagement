@@ -37,38 +37,55 @@ public class Employee {
 	@Column(name = "email")
 	@ArcEmail
 	private String email;
-	
+
+	@Column(name = "password")
+	private String password;
+
 	@Column(name = "contact")
 	private String contact;
-	
+
 	@Transient
-	private String formRole; //Has no use in entity but used as a helper token to parse role from the form.
-	
-	
-	@ManyToOne(cascade = {CascadeType.DETACH,CascadeType.MERGE,CascadeType.PERSIST,CascadeType.REFRESH})
+	private String formRole; // Has no use in entity but used as a helper token to parse role from the form.
+
+	@Transient
+	private String confirmPassword;
+
+	@ManyToOne(cascade = { CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH })
 	@JoinColumn(name = "role_id")
 	private Role role;
 
-	@ManyToMany(cascade = { CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH},fetch = FetchType.EAGER)
+	@ManyToMany(cascade = { CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST,
+			CascadeType.REFRESH }, fetch = FetchType.EAGER)
 	@JoinTable(name = "employee_reservation", joinColumns = @JoinColumn(name = "employee_id"), inverseJoinColumns = @JoinColumn(name = "reservation_id"))
 	private List<Reservation> reservations;
-
 
 	public Employee() {
 	}
 
-
-
-	public Employee(Long employeeId, String firstName, String lastName, String email, String contact) {
+	public Employee(String firstName, String lastName, String email, String contact) {
 		super();
-		this.employeeId = employeeId;
 		this.firstName = firstName;
 		this.lastName = lastName;
 		this.email = email;
+
 		this.contact = contact;
 	}
 
+	public String getPassword() {
+		return password;
+	}
 
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
+	public String getConfirmPassword() {
+		return confirmPassword;
+	}
+
+	public void setConfirmPassword(String confirmPassword) {
+		this.confirmPassword = confirmPassword;
+	}
 
 	public Long getEmployeeId() {
 		return employeeId;
@@ -102,8 +119,6 @@ public class Employee {
 		this.email = email;
 	}
 
-	
-	
 	public String getContact() {
 		return contact;
 	}
@@ -127,26 +142,19 @@ public class Employee {
 	public void setReservations(List<Reservation> reservations) {
 		this.reservations = reservations;
 	}
-	
-	
-	
+
 	public String getFormRole() {
 		return formRole;
 	}
-
-
 
 	public void setFormRole(String formRole) {
 		this.formRole = formRole;
 	}
 
-
-
-	public void bookSeat(Reservation reservation)
-	{
-		if(reservations == null)
+	public void bookSeat(Reservation reservation) {
+		if (reservations == null)
 			reservations = new ArrayList<>();
-		
+
 		reservations.add(reservation);
 	}
 
@@ -155,7 +163,5 @@ public class Employee {
 		return "Employee [employeeId=" + employeeId + ", firstName=" + firstName + ", lastName=" + lastName + ", email="
 				+ email + ", contact=" + contact + "]";
 	}
-
-	
 
 }

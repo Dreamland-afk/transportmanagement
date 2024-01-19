@@ -36,15 +36,34 @@ public class ReservationService {
 		String jpql = "SELECT s FROM Employee s JOIN s.reservations d WHERE d.destination = :destinationName AND d.reservatinDate = :specificDate";
 		TypedQuery<Employee> query = entityManager.createQuery(jpql, Employee.class);
 		query.setParameter("destinationName","Ultadanga");
-		query.setParameter("specificDate", Date.valueOf(currentDate));
-		System.out.println("From ReservationService::getEmployeesPerDate() "+query.getFirstResult());
-		return query.getResultList();
+		query.setParameter("specificDate", Date.valueOf("2023-12-23"));
+		System.out.println("From ReservationService::getEmployeesPerDate() "+query.getResultList());
+//		return query.getResultList();
+		return null;
 	}
 	
-	public Reservation getReservationByDestination(String name)
+	@Transactional
+	public  Reservation fetchEmailReservationsForDay(String email)
+	{
+		String jpql = "SELECT d FROM Employee s JOIN s.reservations d WHERE s.email = :email AND d.reservatinDate = :specificDate";
+//		String jpql = "SELECT d FROM Employee s JOIN s.reservations d WHERE d.reservatinDate = :specificDate";
+
+		TypedQuery<Reservation> query = entityManager.createQuery(jpql, Reservation.class);
+		query.setParameter("email",email);
+		query.setParameter("specificDate", Date.valueOf("2023-12-23"));
+		System.out.println("From ReservationService::getEmployeesPerDate() "+query.getResultList());
+
+		
+		if(query.getSingleResult() == null)
+			return null; 
+		return query.getSingleResult();
+	}
+	
+	@Transactional
+	public Reservation getReservationByDestination(String destination)
 	{
 		
-		Reservation reservation =  reservationDAO.findByDestinationAndReservatinDate(name,Date.valueOf(currentDate));
+		Reservation reservation =  reservationDAO.findByDestinationAndReservatinDate(destination,Date.valueOf(currentDate));
 		
 		return reservation;
 	}

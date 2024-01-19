@@ -71,5 +71,16 @@ public class EmployeeService {
 		return "Reservation Successful.";
 
 	}
+	
+	@Transactional
+	public Employee findByEmail(String email)
+	{
+		Employee employee = employeeDAO.findByEmail(email);
+		
+		if(employee != null)
+			return employee;
+		
+		return null;
+	}
 
 }
